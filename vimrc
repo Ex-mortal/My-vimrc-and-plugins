@@ -230,23 +230,17 @@ noremap <F10> :NERDTreeToggle<CR>
 "}}}
 
 "Voom {{{2
-function! Def_Voom()
-	if &filetype =="markdown"
-		:VoomToggle markdown
-	elseif &filetype == "pandoc"
-		:VoomToggle pandoc
-	elseif &filetype =="org"
-		:VoomToggle org
-	elseif &filetype == '' || &filetype =='text'
-		"自定义的分级
-		:VoomToggle chapter
-	else
-		:VoomToggle
-	endif
-	"	echo "VoomToggle"
-endfunction
-noremap <silent> <F11> :call Def_Voom()<CR>
-inoremap <silent> <F11> <esc>:call Def_Voom()<CR>
+let g:voom_ft_modes = {
+			\'markdown' : 'markdown',
+			\'tex' : 'latex',
+			\'pandoc': 'pandoc',
+			\'org' : 'org',
+			\'text' : 'chapter',
+			\'' : 'chapter',
+			\}
+
+noremap <F11> :VoomToggle<CR>
+inoremap <F11> <esc>:VoomToggle<CR>
 "}}}
 "}}}
 
