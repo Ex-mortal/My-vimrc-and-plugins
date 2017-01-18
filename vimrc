@@ -115,6 +115,16 @@ set gcr=a:blinkon0
 "解决有时只显示一半双字节字符的问题
 set ambiwidth=double
 set laststatus=2 "状态栏出现在倒数第二行。
+
+if has("gui_running")
+	"au GUIEnter * simalt ~x " 窗口启动时自动最大化
+	"set guioptions-=m " 隐藏菜单栏
+	set guioptions-=T " 隐藏工具栏
+	"set guioptions-=L " 隐藏左侧滚动条
+	"set guioptions-=r " 隐藏右侧滚动条
+	"set guioptions-=b " 隐藏底部滚动条
+	"set showtabline=0 " 隐藏Tab栏
+endif
 "}}}
 
 "键位设置{{{2
