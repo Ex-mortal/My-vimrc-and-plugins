@@ -29,6 +29,8 @@ endfunction
 
 " 基本设置 {{{1
 set nocompatible
+winpos 50 0
+set lines=25 columns=80
 " 让alt键不乱弹出菜单
 set winaltkeys=no
 "正常关闭前 建立备份文件
@@ -42,12 +44,23 @@ syntax on "高亮
 set visualbell t_vb=  "关闭visual bell
 au GuiEnter * set t_vb= "关闭beep
 set autochdir "需要自动改变vim的当前目录为打开的文件所在目录则设置此项
-set ru "标尺信息
 set autoindent "自动缩进
 set smartindent
 "设置tab长度为4
 set tabstop=4
 set shiftwidth=4
+"插入结束括号时，来回跳一下匹配括号
+set showmatch
+"文件在外部被修改时，自动重新读取
+set autoread
+set display=lastline "显示最多行，不用@@
+set spr "Splite the new windows at right
+" 在上下移动光标时，光标的上方或下方至少会保留显示的行数
+" 不起作用
+set scrolloff=3
+
+"这个设置不起作用
+"set formatoptions+=Bj
 
 "搜索时全小写相当于不区分大小写，只要有一个大写字母出现，则区分大小写
 "simple idea, great achievement!
@@ -57,10 +70,23 @@ set hlsearch
 "标签功能
 set switchbuf=useopen,usetab,newtab
 
-"没用
-"autocmd BufRead,BufNewFile *  set filetype text
+" 防止tmux下vim的背景色显示异常
+" Refer: http://sunaku.github.io/vim-256color-bce.html
+if &term =~ '256color'
+  " disable Background Color Erase (BCE) so that color schemes
+  " render properly when inside 256-color tmux and GNU screen.
+  " see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+  set t_ut=
+endif
+
+" 显示中文帮助
+if version >= 603
+    set helplang=cn
+    set encoding=utf-8
+endif
 
 " vimrc 位置{{{2
+"说好的自动设置呢
 let $MYVIMRC = '$VIM/vimrc'
 "
 "---
@@ -75,19 +101,20 @@ source $VIMRUNTIME/menu.vim
 "}}}
 
 "字体设置 {{{2
-set guifont=Monaco:h18:cANSI
-set gfw=新宋体:h20:cGB2312
+set guifont=Source\ Code\ Pro:h20:cANSI,Monaco:h20:cANSI
+set gfw=Microsoft\ Yahei:h20:cGB2312,新宋体:h20:cGB2312
 "设置中英文字号
 "}}}
 "
 "界面设置{{{2
-set lines=25 columns=80
-" 显示行号
-set number
+
+set ruler "标尺信息
+set number " 显示行号
 "光标别闪
 set gcr=a:blinkon0
 "解决有时只显示一半双字节字符的问题
 set ambiwidth=double
+set laststatus=2 "状态栏出现在倒数第二行。
 "}}}
 
 "键位设置{{{2
@@ -95,8 +122,9 @@ let mapleader = ","
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 noremap <f12> :vsplit<cr>
-" 移动可以换行（不知道为什么不起作用）
+
 set backspace=indent,eol,start
+" 移动可以换行（不知道为什么不起作用）
 set whichwrap=b,s,<,>,h,l,[,]
 
 "nnoremap <esc> :noh<return><esc>
@@ -120,12 +148,17 @@ inoremap <C-K> <esc>gka
 inoremap <C-X> <BS>
 
 "Tab标签
-noremap <C-TAB> gt
-noremap <C-t> :tabnew<CR>
-inoremap <C-t> <ESC>:tabnew<CR>i
-inoremap <M-w> <ESC>:tabclose<CR>
-noremap <M-w> :tabclose<CR>
+"noremap <C-TAB> gt
+"noremap <C-t> :tabnew<CR>
+"inoremap <C-t> <ESC>:tabnew<CR>i
+"inoremap <M-w> <ESC>:tabclose<CR>
+"noremap <M-w> :tabclose<CR>
 
+"设置切换Buffer快捷键"
+nnoremap <C-tab> :bn<CR>
+nnoremap <C-s-tab> :bp<CR>
+inoremap <C-tab> <ESC>:bn<CR>i
+inoremap <C-s-tab> <ESC>:bp<CR>i
 "命令行
 cnoremap <C-H> <left>
 cnoremap <C-L> <right>
@@ -197,8 +230,9 @@ nnoremap <silent> g* g*zz
 "用vim-plug加载插件{{{2
 call plug#begin('$VIM/vimfiles/plugged')
 
-"设置solarized dark 主题
-Plug 'altercation/vim-colors-solarized'
+Plug 'icymind/NeoSolarized'
+Plug 'morhetz/gruvbox'
+Plug 'sickill/vim-monokai'
 
 " VOom 插件
 Plug 'vim-voom/VOoM'
@@ -206,27 +240,33 @@ Plug 'scrooloose/nerdtree'
 
 Plug 'vimwiki/vimwiki'
 
-Plug 'vim-scripts/winmanager'
-
 "pandoc
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
-"}}}
-"
+
+Plug 'jlanzarotta/bufexplorer'
+
+Plug 'vim-airline/vim-airline'
+
+"自定义插件
+"let MY_PLUGIN_PATH = '$VIM/vimfiles/my-extension/'
+"Plug MY_PLUGIN_PATH . ''
 
 call plug#end()
 
-
-
-
-"Solarized 主题{{{2
-syntax enable
-set background=dark
-colorscheme solarized
 "}}}
+"
 
+"主题{{{2
+set background=dark
+"colorscheme monokai
+"colorscheme solarized
+colorscheme gruvbox
+"}}}
+1
 "NERDTree {{{2
 noremap <F10> :NERDTreeToggle<CR>
+inoremap <F10> <ESC>:NERDTreeToggle<CR>
 "}}}
 
 "Voom {{{2
@@ -241,6 +281,37 @@ let g:voom_ft_modes = {
 
 noremap <F11> :VoomToggle<CR>
 inoremap <F11> <esc>:VoomToggle<CR>
+"}}}
+"
+"airline{{{1
+"这个是安装字体后 必须设置此项" 
+"let g:airline_powerline_fonts = 1   
+
+ "打开tabline功能,方便查看Buffer和切换,省去了minibufexpl插件
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+
+" 关闭状态显示空白符号计数
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline#extensions#whitespace#symbol = '!'
+" 设置consolas字体"前面已经设置过
+"set guifont=Consolas\ for\ Powerline\ FixedD:h11
+if !exists('g:airline_symbols')
+	let g:airline_symbols = {}
+endif
+
+let g:airline_left_sep = ' >>'
+let g:airline_right_sep = '<< '
+let g:airline_symbols.crypt = '🔒'
+let g:airline_symbols.linenr = '¶'
+let g:airline_symbols.maxlinenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.paste = 'ρ'
+let g:airline_symbols.paste = 'Þ'
+let g:airline_symbols.paste = '∥'
+let g:airline_symbols.whitespace = 'Ξ'
+
+
 "}}}
 "}}}
 
@@ -350,8 +421,11 @@ augroup Add_Markdown_Tittle
 	"注意连续行中第一行的尾部有一个空格，否则会报错
 	"autocmd BufNewFile,BufRead *.txt,*.md,*.markdown,*.pandoc 
 	"			\call <SID>Keybindings_of_Add_Tittle()
-	autocmd FileType text,markdown,md,pandoc 
+	autocmd FileType text,markdown,md,pandoc, 
 				\call <SID>Keybindings_of_Add_Tittle()
+	if &filetype==''
+		call <SID>Keybindings_of_Add_Tittle()
+	endif
 augroup END
 "}}}
 "
@@ -360,7 +434,7 @@ augroup END
 function! s:words_counter(inVisual) range
 	if !has('python')
 		echo "Error: Required vim compiled with +python"
-		finish
+		return
 	endif
 
 	if a:inVisual
