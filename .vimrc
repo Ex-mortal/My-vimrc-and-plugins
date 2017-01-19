@@ -56,19 +56,14 @@ set autoread
 set display=lastline "显示最多行，不用@@
 set spr "Splite the new windows at right
 " 在上下移动光标时，光标的上方或下方至少会保留显示的行数
-" 不起作用
-set scrolloff=3
 
-"这个设置不起作用
-"set formatoptions+=Bj
+set scrolloff=3
+set formatoptions+=Bj
 
 "搜索时全小写相当于不区分大小写，只要有一个大写字母出现，则区分大小写
 "simple idea, great achievement!
 set ignorecase smartcase
 set hlsearch
-
-"标签功能
-set switchbuf=useopen,usetab,newtab
 
 " 防止tmux下vim的背景色显示异常
 " Refer: http://sunaku.github.io/vim-256color-bce.html
@@ -85,9 +80,6 @@ if version >= 603
     set encoding=utf-8
 endif
 
-" vimrc 位置{{{2
-"说好的自动设置呢
-let $MYVIMRC = '$VIM/vimrc'
 "
 "---
 "解决乱码{{{2
@@ -131,10 +123,11 @@ endif
 let mapleader = ","
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
-noremap <f12> :vsplit<cr>
+"noremap <f12> :vsplit<cr>
+noremap <leader>bd :bdelete<cr>
 
 set backspace=indent,eol,start
-" 移动可以换行（不知道为什么不起作用）
+" 移动可以换行
 set whichwrap=b,s,<,>,h,l,[,]
 
 "nnoremap <esc> :noh<return><esc>
@@ -155,26 +148,18 @@ inoremap <C-H> <left>
 inoremap <C-L> <right>
 inoremap <C-J> <esc>gja
 inoremap <C-K> <esc>gka
-inoremap <C-X> <BS>
-
-"Tab标签
-"noremap <C-TAB> gt
-"noremap <C-t> :tabnew<CR>
-"inoremap <C-t> <ESC>:tabnew<CR>i
-"inoremap <M-w> <ESC>:tabclose<CR>
-"noremap <M-w> :tabclose<CR>
 
 "设置切换Buffer快捷键"
 nnoremap <C-tab> :bn<CR>
 nnoremap <C-s-tab> :bp<CR>
-inoremap <C-tab> <ESC>:bn<CR>i
-inoremap <C-s-tab> <ESC>:bp<CR>i
+"inoremap <C-tab> <ESC>:bn<CR>a
+"inoremap <C-s-tab> <ESC>:bp<CR>a
+
 "命令行
 cnoremap <C-H> <left>
 cnoremap <C-L> <right>
 cnoremap <C-K> <up>
 cnoremap <C-J> <down>
-cnoremap <C-X> <BS>
 
 "MS Like Notepad
 vnoremap <C-C> "+y
@@ -196,13 +181,13 @@ inoremap <C-e> <ESC>A
 inoremap <C-a> <ESC>I
 
 "Convinent >
-"nnoremap < <<
-"nnoremap > >>
+nnoremap < <<
+nnoremap > >>
 "nnoremap V 0v$h
 
 "Shift > enhance
-"vnoremap < <gv
-"vnoremap > >gv
+vnoremap < <gv
+vnoremap > >gv
 
 "CMD Line
 "cnoremap <C-A> <Home>
@@ -407,24 +392,43 @@ endfunction
 
 function! s:Keybindings_of_Add_Tittle()
 	inoremap <silent> <expr> 
-				\<S-CR> "\<ESC>" . <SID>Add_MD_Tittle('same_level')
+			\<S-CR> "\<ESC>" . <SID>Add_MD_Tittle('same_level')
 	inoremap <silent> <expr> 
-				\<C-CR> "\<ESC>" . <SID>Add_MD_Tittle('next_level')
+			\<C-CR> "\<ESC>" . <SID>Add_MD_Tittle('next_level')
 	"Alt + Enter 键不起作用
 	"inoremap <silent> <expr> <M-CR> <SID>Add_MD_Tittle('upper_level') 
 	"noremap <silent> <C-1> 
 	"
 	" 六级标题，Alt + ( 1 - 6 ), Alt + 0 还原
-	for i in range(0,6)
-		execute printf(
-					\'noremap <silent> <M-%s> ' 
-					\. ':call <SID>Manually_Add_Tittle(%s)<cr>'
-					\, i , i)
-		execute printf(
-					\'inoremap <silent> <M-%s> ' 
-					\. '<c-r>=<SID>Manually_Add_Tittle(%s)<cr>'
-					\, i , i)
-	endfor
+	noremap <silent> <M-0> 
+				\:call <SID>Manually_Add_Tittle(0)<cr>
+	noremap <silent> <M-1> 
+				\:call <SID>Manually_Add_Tittle(1)<cr>
+	noremap <silent> <M-2> 
+				\:call <SID>Manually_Add_Tittle(2)<cr>
+	noremap <silent> <M-3> 
+				\:call <SID>Manually_Add_Tittle(3)<cr>
+	noremap <silent> <M-4> 
+				\:call <SID>Manually_Add_Tittle(4)<cr>
+	noremap <silent> <M-5> 
+				\:call <SID>Manually_Add_Tittle(5)<cr>
+	noremap <silent> <M-6> 
+				\:call <SID>Manually_Add_Tittle(6)<cr>
+
+	inoremap <silent> <M-0> 
+				\<c-r>=<SID>Manually_Add_Tittle(0)<cr>
+	inoremap <silent> <M-1> 
+				\<c-r>=<SID>Manually_Add_Tittle(1)<cr>
+	inoremap <silent> <M-2> 
+				\<c-r>=<SID>Manually_Add_Tittle(2)<cr>
+	inoremap <silent> <M-3> 
+				\<c-r>=<SID>Manually_Add_Tittle(3)<cr>
+	inoremap <silent> <M-4> 
+				\<c-r>=<SID>Manually_Add_Tittle(4)<cr>
+	inoremap <silent> <M-5> 
+				\<c-r>=<SID>Manually_Add_Tittle(5)<cr>
+	inoremap <silent> <M-6> 
+				\<c-r>=<SID>Manually_Add_Tittle(6)<cr>
 endfunction
 
 augroup Add_Markdown_Tittle
@@ -433,9 +437,9 @@ augroup Add_Markdown_Tittle
 	"			\call <SID>Keybindings_of_Add_Tittle()
 	autocmd FileType text,markdown,md,pandoc, 
 				\call <SID>Keybindings_of_Add_Tittle()
-	if &filetype==''
-		call <SID>Keybindings_of_Add_Tittle()
-	endif
+"	if &filetype==''
+"		call <SID>Keybindings_of_Add_Tittle()
+"	endif
 augroup END
 "}}}
 "
@@ -544,3 +548,4 @@ augroup words_counter
 augroup END
 
 "}}}
+
